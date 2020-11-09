@@ -174,7 +174,7 @@ Arduino_ST7789 tft = Arduino_ST7789(TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK);
 // --------- related values --------
 //
 // https://de.wikipedia.org/wiki/Luftdruck
-#define SEALEVELPRESSURE_HPA (1013.25)
+// #define SEALEVELPRESSURE_HPA (1013.25)
 #define BME_I2C_ADDR             0x76  
 #define BME_LOCAL_SENSOR_ID        22
 //
@@ -193,8 +193,8 @@ Adafruit_BME280 bme; // I2C
 // --------- related values --------
 //
 
-#define WLAN_SSID       ""
-#define WLAN_PASSPHRASE ""
+#define WLAN_SSID       "TP-LINK"
+#define WLAN_PASSPHRASE "Das_ist_eine_1a_sichere_Passphrase"
 
 // Replace with your network credentials
 const char* ssid = WLAN_SSID;
@@ -260,65 +260,28 @@ Timezone myTZ;
 // ----------------------- system configuration -----------------------
 //
 
-#define VALUE_TYPE_FLOAT           'f'
-#define VALUE_TYPE_LONG            'l'
 
-struct _sensor_value_ {
-    bool is_valid;
-    bool has_changed;
-    char value_type;
-    unsigned long long_data;
-    float float_data;
-};
 
-struct _system_vars_ {
+// #define TIME_MINUTES_TO_SECONDS(M)	(M*60)
+// #define TIME_HOURS_TO_SECONDS(H)	(H*60*60)
+// #define TIME_DAYS_TO_SECONDS(D)		(D*24*60*60)
 
-    bool valid_serial;
-    bool valid_display;
-    bool valid_bme280;
-    bool valid_wlan;
-    bool valid_http;
-    bool valid_telnet;
-    bool valid_NTP;
-    bool valid_FLASH;
-    //
-    float bme_sealevel_hpa;
-    //
-    unsigned long local_bme_temperature_interval;
-    unsigned long local_bme_humidity_interval;
-    unsigned long local_bme_pressure_interval;
-    //
-    unsigned long local_bme_last_temperature_read;
-    unsigned long local_bme_last_humidity_read;
-    unsigned long local_bme_last_pressure_read;
-    //
-    struct _sensor_value_ local_bme_temperature;
-    struct _sensor_value_ last_local_bme_temperature;
-    struct _sensor_value_ local_bme_humidity;
-    struct _sensor_value_ last_local_bme_humidity;
-    struct _sensor_value_ local_bme_pressure;
-    struct _sensor_value_ last_local_bme_pressure;
-    //
-    unsigned long http_timeoutTime;
-    //
-    unsigned long telnet_timeoutTime;
-    //
-    unsigned long wlan_timeoutTime;
-};
+// #define BME_TEMPERATURE_INTERVAL  TIME_MINUTES_TO_SECONDS(2)
+// #define BME_HUMIDITY_INTERVAL     TIME_MINUTES_TO_SECONDS(3)
+// #define BME_PRESSURE_INTERVAL     TIME_MINUTES_TO_SECONDS(4)
 
-#define HTTP_TIMEOUT_MILLIS      2000
-#define TELNET_TIMEOUT_MILLIS    2000
-#define WIFI_TIMEOUT_MILLIS     30000
 
-#define TIME_MINUTES_TO_SECONDS(M)	(M*60)
-#define TIME_HOURS_TO_SECONDS(H)	(H*60*60)
-#define TIME_DAYS_TO_SECONDS(D)		(D*24*60*60)
+//
+// ************************** SYSTEM SETTINGS **************************
+//
+//
+// -------- SYSTEM VARIABLES --------
+//
+#include "sysvars.h"
 
-#define BME_TEMPERATURE_INTERVAL  TIME_MINUTES_TO_SECONDS(2)
-#define BME_HUMIDITY_INTERVAL     TIME_MINUTES_TO_SECONDS(3)
-#define BME_PRESSURE_INTERVAL     TIME_MINUTES_TO_SECONDS(4)
+extern struct _system_vars_ _envVars;
 
-struct _system_vars_ _envVars;
+
 
 //
 // *************************** FUNCTIONALITY ***************************
@@ -653,119 +616,6 @@ bool setupHTTP(void)
     return(retVal);
 }
 
-// ---------------------------------------------------------------------
-//  void setupDefaults(void) 
-// ------------
-//  arguments: -
-// ------------
-//  purpose  : initialize all system vars with defaults
-// ------------
-//  returns  : nothing
-// ---------------------------------------------------------------------
-void setupDefaults(void) 
-{
-    Serial.println("Setup defaults ...");
-
-    _envVars.valid_serial             = false;
-    _envVars.valid_display            = false;
-    _envVars.valid_bme280             = false;
-    _envVars.valid_wlan               = false;
-    _envVars.valid_http               = false;
-    _envVars.valid_telnet             = false;
-    _envVars.valid_NTP                = false;
-    _envVars.valid_FLASH              = false;
-    //
-    _envVars.bme_sealevel_hpa         = SEALEVELPRESSURE_HPA;
-
-    _envVars.local_bme_temperature_interval = BME_TEMPERATURE_INTERVAL * 1000;
-    _envVars.local_bme_humidity_interval    = BME_HUMIDITY_INTERVAL * 1000;
-    _envVars.local_bme_pressure_interval    = BME_PRESSURE_INTERVAL * 1000;
-
-    _envVars.local_bme_last_temperature_read   = 0;
-    _envVars.local_bme_last_humidity_read      = 0;
-    _envVars.local_bme_last_pressure_read      = 0;
-
-    _envVars.local_bme_temperature.is_valid    = false;
-    _envVars.local_bme_temperature.has_changed = false;
-    _envVars.local_bme_temperature.value_type  = VALUE_TYPE_FLOAT;
-    _envVars.local_bme_temperature.long_data   = 0;
-    _envVars.local_bme_temperature.float_data  = 0.0;
-
-    _envVars.last_local_bme_temperature = _envVars.local_bme_humidity = 
-        _envVars.last_local_bme_humidity = _envVars.local_bme_pressure = 
-        _envVars.last_local_bme_pressure = _envVars.local_bme_temperature;
-
-    _envVars.http_timeoutTime         = HTTP_TIMEOUT_MILLIS;
-    //
-    _envVars.telnet_timeoutTime       = TELNET_TIMEOUT_MILLIS;
-    //
-    _envVars.wlan_timeoutTime         = WIFI_TIMEOUT_MILLIS;
-}
-
-// ---------------------------------------------------------------------
-//  void showEnvVars(void) 
-// ------------
-//  arguments: -
-// ------------
-//  purpose  : dump env vars
-// ------------
-//  returns  : nothing
-// ---------------------------------------------------------------------
-void showEnvVars(void) 
-{
-
-    Serial.println();
-    Serial.println("ENV dump:");
-
-    Serial.print("_envVars.valid_serial .: ");
-    Serial.println( _envVars.valid_serial ? "true" : "false" );
-
-    Serial.print("_envVars.valid_display : ");
-    Serial.println( _envVars.valid_display ? "true" : "false" );
-
-    Serial.print("_envVars.valid_bme280 .: ");
-    Serial.println( _envVars.valid_bme280 ? "true" : "false" );
-
-    Serial.print("_envVars.valid_wlan ...: ");
-    Serial.println( _envVars.valid_wlan ? "true" : "false" );
-
-    Serial.print("_envVars.valid_http ...: ");
-    Serial.println( _envVars.valid_http ? "true" : "false" );
-
-    Serial.print("_envVars.valid_telnet .: ");
-    Serial.println( _envVars.valid_telnet ? "true" : "false" );
-
-    Serial.print("_envVars.valid_NTP ....: ");
-    Serial.println( _envVars.valid_NTP ? "true" : "false" );
-
-    Serial.print("_envVars.valid_FLASH ..: ");
-    Serial.println( _envVars.valid_FLASH ? "true" : "false" );
-
-    Serial.print("_envVars.bme_sealevel_hpa ..............: ");
-    Serial.println(_envVars.bme_sealevel_hpa);
-
-    Serial.print("_envVars.local_bme_temperature_interval : ");
-    Serial.println(_envVars.local_bme_temperature_interval);
-
-    Serial.print("_envVars.local_bme_humidity_interval ...: ");
-    Serial.println(_envVars.local_bme_humidity_interval);
-
-    Serial.print("_envVars.local_bme_pressure_interval ...: ");
-    Serial.println(_envVars.local_bme_pressure_interval);
-
-    Serial.print("_envVars.http_timeoutTime ..............: ");
-    Serial.println(_envVars.http_timeoutTime);
-
-    Serial.print("_envVars.telnet_timeoutTime ............: ");
-    Serial.println(_envVars.telnet_timeoutTime);
-
-    Serial.print("_envVars.wlan_timeoutTime ..............: ");
-    Serial.println(_envVars.wlan_timeoutTime);
-
-}
-
-
-
 
 bool writeData( char *pPath, float sensorValue, 
                 unsigned char dataType, unsigned char sensorId )
@@ -870,57 +720,6 @@ bool writeData( char *pPath, float sensorValue,
 
 
 
-// ---------------------------------------------------------------------
-//  bool restoreSettings(void) 
-// ------------
-//  arguments: -
-// ------------
-//  purpose  : read previous stored system settings from flash
-// ------------
-//  returns  : nothing
-// ---------------------------------------------------------------------
-bool restoreSettings(void) 
-{
-    bool retVal = true;
-
-    if( (retVal = _envVars.valid_FLASH) == true )
-    {
-//        if( SPIFFS.exists("/test.txt") )
-//        {
-//            SPIFFS.remove("/test.txt");
-//        }
-//
-//        File file = SPIFFS.open("/test.txt", FILE_WRITE);
-//
-//        if (!file) 
-//        {
-//            retVal = false;
-//            Serial.println("There was an error opening the file for writing");
-//        }
-//        else
-//        {
-//            if (file.print("TEST")) 
-//            {
-//                Serial.println("File was written");
-//            } 
-//            else 
-//            {
-//                retVal = false;
-//                Serial.println("File write failed");
-//            }
-//
-//            file.close();
-//        }
-    }
-    else
-    {
-        Serial.println("NO valid SPIFFS");
-    }
-
-    return(retVal);
-}
-
-
 //
 // *********************************************************************
 
@@ -941,11 +740,9 @@ void setup(void)
     Serial.begin(SERIAL_BAUD);
     _envVars.valid_serial = true;
 
-//    showEnvVars();
-
     _envVars.valid_FLASH  = setupFlash();
 
-    restoreSettings(); 
+    readSysVars( &_envVars );
 
     _envVars.valid_display = setupDisplay();
 
@@ -960,8 +757,25 @@ void setup(void)
     _envVars.valid_NTP = setupNTP();
 
     setupPins();
- 
-//    showEnvVars();
+
+//#ifdef NODEF
+    setAdminPassword( (char*) "AdminPassword", &_envVars );
+    setStaticIP( (char*) "staticIP", &_envVars );
+    setWlanSSID( (char*) "SSID", &_envVars );
+    setWlanPassphrase( (char*) "Passphrase", &_envVars );
+    setUartApiUser( (char*) "ApiUser", &_envVars );
+    setUartApiPassword( (char*) "ApiPassword", &_envVars );
+    setHttpApiUser( (char*) "ApiUser", &_envVars );
+    setHttpApiPassword( (char*) "ApiPassword", &_envVars );
+    setTelnetApiUser( (char*) "ApiUser", &_envVars );
+    setTelnetApiPassword( (char*) "ApiPassword", &_envVars );
+
+    writeSysVars( &_envVars );
+//#endif // NODEF
+
+    showSysVars( &_envVars );
+
+//    freeSysVars( &_envVars );
 
 }
 
@@ -1978,12 +1792,12 @@ void startCharPage1( char *pValueName, uint16_t bgColor, uint16_t fgColor )
             tft.setTextWrap(false);
             tft.setTextSize(2);
 
-            tft.setCursor(0,  0*16);
+            tft.setCursor(0,  0*TFT_CHAR_HEIGHT);
             tft.print(pValueName);
 
             for( int i = 1; pCharPage1[i] != NULL; i++ )
             {
-                tft.setCursor(0,  i*16);
+                tft.setCursor(0,  i * TFT_CHAR_HEIGHT);
                 tft.print(pCharPage1[i]);
             }
         }
@@ -2003,12 +1817,12 @@ void startCharPage2( char *pValueName, uint16_t bgColor, uint16_t fgColor )
             tft.setTextWrap(false);
             tft.setTextSize(2);
 
-            tft.setCursor(0,  0*16);
+            tft.setCursor(0,  0*TFT_CHAR_HEIGHT);
             tft.print(pValueName);
 
             for( int i = 1; pCharPage2[i] != NULL; i++ )
             {
-                tft.setCursor(0,  i*16);
+                tft.setCursor(0,  i * TFT_CHAR_HEIGHT);
                 tft.print(pCharPage2[i]);
             }
         }
@@ -2646,7 +2460,7 @@ void colorSelection( uint16_t bgColor, uint16_t fgColor,
 
             for( int i = 0; pColorSettings[i] != NULL; i++ )
             {
-                tft.setCursor(0,  i*16);
+                tft.setCursor(0,  i * TFT_CHAR_HEIGHT);
                 tft.print(pColorSettings[i]);
             }
 
@@ -3087,8 +2901,409 @@ Serial.println("NO valid display!");
 
 
 
+//
+// ********************************
+//
+
+char *pNumericInput[] = {
+    "",
+    "",
+    "",
+    "",
+    "      0 1 2 3",
+    "      4 5 6 7",
+    "        8 9",
+    "       . , :",
+    "",
+    "",
+    "",
+    "",
+    "--------------------",
+    "   [<] [DEL] [>]",
+    "   [OK] [CANCEL]",
+    NULL
+};
+
+#define NUMERIC_INPUT_ZERO_ROW               4
+#define NUMERIC_INPUT_ZERO_COLUMN            6
+#define NUMERIC_INPUT_ITEM_ZERO              0
+
+#define NUMERIC_INPUT_ONE_ROW                4
+#define NUMERIC_INPUT_ONE_COLUMN             8
+#define NUMERIC_INPUT_ITEM_ONE               1
+
+#define NUMERIC_INPUT_TWO_ROW                4
+#define NUMERIC_INPUT_TWO_COLUMN            10
+#define NUMERIC_INPUT_ITEM_TWO               2
+
+#define NUMERIC_INPUT_THREE_ROW              4
+#define NUMERIC_INPUT_THREE_COLUMN          12
+#define NUMERIC_INPUT_ITEM_THREE             3
+
+#define NUMERIC_INPUT_FOUR_ROW               5
+#define NUMERIC_INPUT_FOUR_COLUMN            6
+#define NUMERIC_INPUT_ITEM_FOUR              4
+
+#define NUMERIC_INPUT_FIVE_ROW               5
+#define NUMERIC_INPUT_FIVE_COLUMN            8
+#define NUMERIC_INPUT_ITEM_FIVE              5
+
+#define NUMERIC_INPUT_SIX_ROW                5
+#define NUMERIC_INPUT_SIX_COLUMN            10
+#define NUMERIC_INPUT_ITEM_SIX               6
+
+#define NUMERIC_INPUT_SEVEN_ROW              5
+#define NUMERIC_INPUT_SEVEN_COLUMN          12
+#define NUMERIC_INPUT_ITEM_SEVEN             7
+
+#define NUMERIC_INPUT_EIGHT_ROW              6
+#define NUMERIC_INPUT_EIGHT_COLUMN           8
+#define NUMERIC_INPUT_ITEM_EIGHT             8
+
+#define NUMERIC_INPUT_NINE_ROW               6
+#define NUMERIC_INPUT_NINE_COLUMN           10
+#define NUMERIC_INPUT_ITEM_NINE              9
+
+#define NUMERIC_INPUT_DOT_ROW                7
+#define NUMERIC_INPUT_DOT_COLUMN             7
+#define NUMERIC_INPUT_ITEM_DOT              10
+
+#define NUMERIC_INPUT_COMMA_ROW              7
+#define NUMERIC_INPUT_COMMA_COLUMN           9
+#define NUMERIC_INPUT_ITEM_COMMA            11
+
+#define NUMERIC_INPUT_COLON_ROW              7
+#define NUMERIC_INPUT_COLON_COLUMN          11
+#define NUMERIC_INPUT_ITEM_COLON            12
+
+#define NUMERIC_INPUT_LEFT_ROW              13
+#define NUMERIC_INPUT_LEFT_COLUMN            4
+#define NUMERIC_INPUT_ITEM_LEFT             13
+
+#define NUMERIC_INPUT_DEL_ROW               13
+#define NUMERIC_INPUT_DEL_COLUMN             8
+#define NUMERIC_INPUT_ITEM_DEL              14
+
+#define NUMERIC_INPUT_RIGHT_ROW             13
+#define NUMERIC_INPUT_RIGHT_COLUMN          14
+#define NUMERIC_INPUT_ITEM_RIGHT            15
+
+#define NUMERIC_INPUT_OK_ROW                14
+#define NUMERIC_INPUT_OK_COLUMN              4
+#define NUMERIC_INPUT_ITEM_OK               16
+
+#define NUMERIC_INPUT_CANCEL_ROW            14
+#define NUMERIC_INPUT_CANCEL_COLUMN          9
+#define NUMERIC_INPUT_ITEM_CANCEL           17
+
+#define MAX_ITEMS_NUMERIC_INPUT             18
+#define MAX_LEN_NUMERIC_INPUT_ITEM           6
 
 
+//
+// ********************************
+//
+
+
+
+void numericInput( uint16_t bgColor, uint16_t fgColor, char *pWhat,
+                     char *pResult, int maxLen )
+{
+    if( _envVars.valid_display )
+    {
+        if( pWhat != NULL && pResult != NULL )
+        {
+            int keyPressed;
+            int maxItem = MAX_ITEMS_NUMERIC_INPUT;
+            int currItem, prevItem;
+            int currXPos, currYPos;
+            int prevXPos, prevYPos;
+            int currItemColumn, currItemRow;
+            int prevItemColumn, prevItemRow;
+
+            char pCurrItem[MAX_LEN_NUMERIC_INPUT_ITEM + 1];
+            char pPrevItem[MAX_LEN_NUMERIC_INPUT_ITEM + 1];
+            int currInputLen;
+            bool isCommand;
+            int inputResult;
+            bool inputDone;
+           
+            tft.fillScreen(bgColor);
+            tft.setTextColor(fgColor);
+            tft.setTextWrap(false);
+            tft.setTextSize(2);
+
+            tft.setCursor(0, 0);
+            tft.print(pWhat);
+            tft.print("=");
+
+            for( int i = 0; pNumericInput[i] != NULL; i++ )
+            {
+                tft.setCursor(0,  i * TFT_CHAR_HEIGHT);
+                tft.print(pNumericInput[i]);
+            }
+
+            isCommand = inputDone = false;
+
+            memset( pResult, '\0', maxLen );
+            currInputLen = 0;
+
+            memset( pCurrItem, '\0', sizeof( pCurrItem ) );
+            memset( pPrevItem, '\0', sizeof( pPrevItem ) );
+
+            inputResult = INPUT_RESULT_NO_RESULT;
+
+            currItem = prevItem = 0;
+            prevXPos = currXPos = currItem * TFT_CHAR_WIDTH;
+            prevYPos = currYPos = currItem * TFT_CHAR_HEIGHT;
+            currItemColumn = prevItemColumn = NUMERIC_INPUT_ZERO_COLUMN;
+            currItemRow = prevItemRow = NUMERIC_INPUT_ZERO_ROW;
+    
+            do
+            {
+                switch( keyPressed = whichKeyPressed() )
+                {
+                    case key_left:
+Serial.print("key_left item = ");
+                        if( currItem > 0 )
+                        {
+                            prevItem = currItem;
+                            currItem--;
+                        }
+                        else
+                        {
+                            // wrap
+                            prevItem = currItem;
+                            currItem = maxItem - 1;
+                        }
+Serial.println(currItem);
+                        break;
+                    case key_right:
+Serial.print("key_right item = ");
+                        if( currItem < (maxItem - 1) )
+                        {
+                            prevItem = currItem;
+                            currItem++;
+                        }
+                        else
+                        {
+                            // wrap
+                            prevItem = currItem;
+                            currItem = 0;
+                        }
+Serial.println(currItem);
+                        break;
+                    case key_accept:
+Serial.println("key_accept");
+                        break;
+                    case key_no_key:
+                        break;
+                    default:
+Serial.println("Unknown key");
+                        break;
+                }
+
+
+                if( keyPressed == key_no_key &&
+                    prevXPos == 0 && prevYPos == 0 )
+                {
+                    strcpy( pCurrItem, "0" );
+                    currXPos = currItemColumn * TFT_CHAR_WIDTH;
+                    currYPos = currItemRow * TFT_CHAR_HEIGHT;
+
+                    tft.setCursor( currXPos, currYPos );
+                    tft.setTextColor(bgColor, fgColor);
+                    tft.print( pCurrItem );
+                }
+
+
+                if( keyPressed != key_no_key )
+                {
+                    if( keyPressed == key_left ||
+                        keyPressed == key_right )
+                    {
+                        prevXPos = currXPos;
+                        prevYPos = currYPos;
+                        prevItemColumn = currItemColumn;
+                        prevItemRow = currItemRow;
+                        strcpy( pPrevItem, pCurrItem );
+
+                        switch( currItem )
+                        {
+                            case NUMERIC_INPUT_ITEM_ZERO:
+                                currItemRow = NUMERIC_INPUT_ZERO_ROW;
+                                currItemColumn = NUMERIC_INPUT_ZERO_COLUMN;
+                                strcpy( pCurrItem, "0" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_ONE:
+                                currItemRow = NUMERIC_INPUT_ONE_ROW;
+                                currItemColumn = NUMERIC_INPUT_ONE_COLUMN;
+                                strcpy( pCurrItem, "1" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_TWO:
+                                currItemRow = NUMERIC_INPUT_TWO_ROW;
+                                currItemColumn = NUMERIC_INPUT_TWO_COLUMN;
+                                strcpy( pCurrItem, "2" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_THREE:
+                                currItemRow = NUMERIC_INPUT_THREE_ROW;
+                                currItemColumn = NUMERIC_INPUT_THREE_COLUMN;
+                                strcpy( pCurrItem, "3" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_FOUR:
+                                currItemRow = NUMERIC_INPUT_FOUR_ROW;
+                                currItemColumn = NUMERIC_INPUT_FOUR_COLUMN;
+                                strcpy( pCurrItem, "4" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_FIVE:
+                                currItemRow = NUMERIC_INPUT_FIVE_ROW;
+                                currItemColumn = NUMERIC_INPUT_FIVE_COLUMN;
+                                strcpy( pCurrItem, "5" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_SIX:
+                                currItemRow = NUMERIC_INPUT_SIX_ROW;
+                                currItemColumn = NUMERIC_INPUT_SIX_COLUMN;
+                                strcpy( pCurrItem, "6" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_SEVEN:
+                                currItemRow = NUMERIC_INPUT_SEVEN_ROW;
+                                currItemColumn = NUMERIC_INPUT_SEVEN_COLUMN;
+                                strcpy( pCurrItem, "7" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_EIGHT:
+                                currItemRow = NUMERIC_INPUT_EIGHT_ROW;
+                                currItemColumn = NUMERIC_INPUT_EIGHT_COLUMN;
+                                strcpy( pCurrItem, "8" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_NINE:
+                                currItemRow = NUMERIC_INPUT_NINE_ROW;
+                                currItemColumn = NUMERIC_INPUT_NINE_COLUMN;
+                                strcpy( pCurrItem, "9" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_DOT:
+                                currItemRow = NUMERIC_INPUT_DOT_ROW;
+                                currItemColumn = NUMERIC_INPUT_DOT_COLUMN;
+                                strcpy( pCurrItem, "." );
+                                break;
+                            case NUMERIC_INPUT_ITEM_COMMA:
+                                currItemRow = NUMERIC_INPUT_COMMA_ROW;
+                                currItemColumn = NUMERIC_INPUT_COMMA_COLUMN;
+                                strcpy( pCurrItem, "," );
+                                break;
+                            case NUMERIC_INPUT_ITEM_COLON:
+                                currItemRow = NUMERIC_INPUT_COLON_ROW;
+                                currItemColumn = NUMERIC_INPUT_COLON_COLUMN;
+                                strcpy( pCurrItem, ":" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_LEFT:
+                                currItemRow = NUMERIC_INPUT_LEFT_ROW;
+                                currItemColumn = NUMERIC_INPUT_LEFT_COLUMN;
+                                strcpy( pCurrItem, "<" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_DEL:
+                                currItemRow = NUMERIC_INPUT_DEL_ROW;
+                                currItemColumn = NUMERIC_INPUT_DEL_COLUMN;
+                                strcpy( pCurrItem, "DEL" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_RIGHT:
+                                currItemRow = NUMERIC_INPUT_RIGHT_ROW;
+                                currItemColumn = NUMERIC_INPUT_RIGHT_COLUMN;
+                                strcpy( pCurrItem, ">" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_OK:
+                                currItemRow = NUMERIC_INPUT_OK_ROW;
+                                currItemColumn = NUMERIC_INPUT_OK_COLUMN;
+                                strcpy( pCurrItem, "OK" );
+                                break;
+                            case NUMERIC_INPUT_ITEM_CANCEL:
+                                currItemRow = NUMERIC_INPUT_CANCEL_ROW;
+                                currItemColumn = NUMERIC_INPUT_CANCEL_COLUMN;
+                                strcpy( pCurrItem, "CANCEL" );
+                                break;
+                            default:
+                                break;
+                        }
+
+                        currXPos = currItemColumn * TFT_CHAR_WIDTH;
+                        currYPos = currItemRow * TFT_CHAR_HEIGHT;
+
+                        //
+                        tft.setCursor( prevXPos, prevYPos );
+                        tft.setTextColor(fgColor, bgColor);
+                        tft.print( pPrevItem );
+                        // 
+                        tft.setCursor( currXPos, currYPos );
+                        tft.setTextColor(bgColor, fgColor);
+                        tft.print( pCurrItem );
+                        //
+
+                    }
+                    else
+                    {
+                        // key_accept
+                        switch( currItem )
+                        {
+                            case NUMERIC_INPUT_ITEM_OK:
+                                inputDone = true;
+                                inputResult = INPUT_RESULT_OK;
+                                break;
+                            case NUMERIC_INPUT_ITEM_CANCEL:
+                                inputDone = true;
+                                inputResult = INPUT_RESULT_CANCEL;
+                                break;
+                            case NUMERIC_INPUT_ITEM_LEFT:
+                            case NUMERIC_INPUT_ITEM_DEL:
+                            case NUMERIC_INPUT_ITEM_RIGHT:
+                                break;
+                            default:
+Serial.println("default in accept");
+                                if( currInputLen + 1 < maxLen )
+                                {
+                                    tft.setTextWrap( true );
+                                    strcat(pResult, pCurrItem);
+                                    currInputLen++;
+                                    
+                                    tft.setTextColor(fgColor, bgColor);
+                                    tft.setCursor( strlen(pWhat)*TFT_CHAR_WIDTH,
+                                                   0 );
+                                                   
+                                    tft.print( pResult );
+                                    tft.setTextWrap( false );
+                                }
+                                // NUMERIC_INPUT_ITEM_DOT:
+                                // NUMERIC_INPUT_ITEM_COMMA:
+                                // NUMERIC_INPUT_ITEM_COLON:
+                                break;
+                        }
+                    }
+
+                }
+
+            } while( !inputDone );
+
+            switch( inputResult )
+            {
+                case INPUT_RESULT_NO_RESULT:
+                    break;
+                case INPUT_RESULT_OK:
+                    break;
+                case INPUT_RESULT_CANCEL:
+                    memset( pResult, '\0', maxLen );
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+Serial.println("pWhat and/or pResult must NOT be NULL!");
+        }
+    }
+    else
+    {
+Serial.println("NO valid display!");
+    }
+}
 
 
 
@@ -3128,10 +3343,13 @@ void setChangedFlag(void)
  * returns: nothing
  ***********************************************************************
 */
+
+#define RESULT_STRING_MAXLEN    30
+
 void loop()
 {
-
   uint16_t newFG, newBG;
+  char resultString[RESULT_STRING_MAXLEN + 1];
 
   events();  // ezTime!
 
@@ -3147,9 +3365,15 @@ void loop()
               Serial.read();
           }
 
-colorSelection( BLACK, WHITE, &newBG, &newFG );
+          numericInput( BLACK, WHITE, "IP-Addr=", 
+                        resultString, RESULT_STRING_MAXLEN);
 
-//          selectStringParam("SSID=", 30);
+//          colorSelection( BLACK, WHITE, &newBG, &newFG );
+
+//          memset( resultString, '\0', sizeof(resultString) );
+//          selectStringParam("SSID=", resultString, RESULT_STRING_MAXLEN);
+//          memset( resultString, '\0', sizeof(resultString) );
+//          selectStringParam("PASS=", resultString, RESULT_STRING_MAXLEN);
 
           tft.fillScreen(BLACK);
           tft.setTextColor(WHITE);
@@ -3169,3 +3393,288 @@ colorSelection( BLACK, WHITE, &newBG, &newFG );
 
 }
 
+#ifdef NEVERDEF
+
+//
+// ********************************
+//
+
+char *pSettingsMenu[] = {
+    "--------------------",
+    "Settings Seite 1",
+    "Settings Seite 2",
+    "Settings Seite 3",
+    "--------------------",
+    "Settings SSID",
+    "Settings Passphrase",
+    "Settings Admin",
+    "Settings IP",
+    "",
+    "",
+    "Speichern",
+    "Werkseinstellungen",
+    "--------------------",
+    "       [EXIT]",
+    NULL
+};
+
+#define XPOS_PAGE_1_SETTINGS_MENU          1
+#define YPOS_PAGE_1_SETTINGS_MENU          1
+
+#define XPOS_PAGE_2_SETTINGS_MENU          1
+#define YPOS_PAGE_2_SETTINGS_MENU          2
+
+#define XPOS_PAGE_3_SETTINGS_MENU          1
+#define YPOS_PAGE_3_SETTINGS_MENU          3
+
+#define XPOS_SSID_SETTINGS_MENU            1
+#define YPOS_SSID_SETTINGS_MENU            5
+
+#define XPOS_PASS_SETTINGS_MENU            1
+#define YPOS_PASS_SETTINGS_MENU            6
+
+#define XPOS_ADMIN_SETTINGS_MENU           1
+#define YPOS_ADMIN_SETTINGS_MENU           7
+
+#define XPOS_FIX_IP_SETTINGS_MENU          1
+#define YPOS_FIX_IP_SETTINGS_MENU          8
+
+#define XPOS_EXIT_SETTINGS_MENU            8
+#define YPOS_EXIT_SETTINGS_MENU           14
+
+// Einstellungen:
+// Format der Ausgabe (ein, zwei, keine Nachkomma-Stellen)
+// abhaengig davon Vergleich (auf bzw. abrunden, ohne Nachkomma vergleichen)
+//
+// Farbe der Ausgabe (alle weiss oder rot, gelb, grün und Grenzwerte dazu)
+// Beschriftung der Felder
+//
+// Trend-Anzeige
+// Mondphasen
+// IP Adresse
+//
+// Lese- unf Anzeige-Intervalle
+//
+// Format und Farbe des Datums und der Uhrzeit
+//
+
+//
+// ********************************
+//
+
+char *pSettingsPage1[] = {
+    "----- Setup 1 ------",
+    "[ ] Wochentag",
+    "[ ] Datum",
+    "[ ] Uhrzeit",
+    "  [ ] Sekunden",
+    "--------------------",
+    "[ ] Interner Sensor",
+    "  [ ] Luftfeuchte",
+    "  [ ] Temperatur",
+    "  [ ] Luftdruck",
+    "  [ ] Trend",
+    "--------------------",
+    "[ ] IP Adresse",
+    "--------------------",
+    "   [OK] [CANCEL]",
+    NULL
+};
+
+#define XPOS_WEEKDAY_SETTINGS_PAGE_1       1
+#define YPOS_WEEKDAY_SETTINGS_PAGE_1       1
+
+#define XPOS_DATE_SETTINGS_PAGE_1          1
+#define YPOS_DATE_SETTINGS_PAGE_1          2
+
+#define XPOS_TIME_SETTINGS_PAGE_1          1
+#define YPOS_TIME_SETTINGS_PAGE_1          3
+
+#define XPOS_TIME_SEC_SETTINGS_PAGE_1      3
+#define YPOS_TIME_SEC_SETTINGS_PAGE_1      4
+
+#define XPOS_INTERNAL_SETTINGS_PAGE_1      1
+#define YPOS_INTERNAL_SETTINGS_PAGE_1      6
+
+#define XPOS_HUMIDITY_SETTINGS_PAGE_1      3
+#define YPOS_HUMIDITY_SETTINGS_PAGE_1      7
+
+#define XPOS_TEMPERATURE_SETTINGS_PAGE_1   3
+#define YPOS_TEMPERATURE_SETTINGS_PAGE_1   8
+
+#define XPOS_PRESSURE_SETTINGS_PAGE_1      3
+#define YPOS_PRESSURE_SETTINGS_PAGE_1      9
+
+#define XPOS_TREND_SETTINGS_PAGE_1         3
+#define YPOS_TREND_SETTINGS_PAGE_1        10
+
+#define XPOS_IP_ADDR_SETTINGS_PAGE_1       1
+#define YPOS_IP_ADDR_SETTINGS_PAGE_1      12
+
+#define XPOS_IP_ADDR_SETTINGS_PAGE_1       4
+#define YPOS_IP_ADDR_SETTINGS_PAGE_1      12
+
+//
+// ********************************
+//
+
+char *pSettingsPage2[] = {
+    "----- Setup 2 ------",
+    "Luftfeuchte",
+    "[ ] Mono [ ] Farbe",
+    "  oberer  xxxxx",
+    "  unterer xxxxx",
+    "Temperatur",
+    "[ ] Mono [ ] Farbe",
+    "  oberer  xxxxx",
+    "  unterer xxxxx",
+    "Luftdruck",
+    "[ ] Mono [ ] Farbe",
+    "  oberer  xxxxx",
+    "  unterer xxxxx",
+    "--------------------",
+    "   [OK] [CANCEL]",
+    NULL
+};
+
+#define XPOS_HUM_MONO_SETTINGS_PAGE_2      1
+#define YPOS_HUM_MONO_SETTINGS_PAGE_2      2
+#define XPOS_HUM_COLORSETTINGS_PAGE_2     10
+#define YPOS_HUM_COLORSETTINGS_PAGE_2      2
+#define XPOS_HUM_UPPER_SETTINGS_PAGE_2    10
+#define YPOS_HUM_UPPER_SETTINGS_PAGE_2     3
+#define XPOS_HUM_LOWER_SETTINGS_PAGE_2    10
+#define YPOS_HUM_LOWER_SETTINGS_PAGE_2     4
+
+#define XPOS_TEMP_MONO_SETTINGS_PAGE_2     1
+#define YPOS_TEMP_MONO_SETTINGS_PAGE_2     6
+#define XPOS_TEMP_COLORSETTINGS_PAGE_2    10
+#define YPOS_TEMP_COLORSETTINGS_PAGE_2     6
+#define XPOS_TEMP_UPPER_SETTINGS_PAGE_2   10
+#define YPOS_TEMP_UPPER_SETTINGS_PAGE_2    7
+#define XPOS_TEMP_LOWER_SETTINGS_PAGE_2   10
+#define YPOS_TEMP_LOWER_SETTINGS_PAGE_2    8
+
+#define XPOS_PRESS_MONO_SETTINGS_PAGE_2    1
+#define YPOS_PRESS_MONO_SETTINGS_PAGE_2   10
+#define XPOS_PRESS_COLORSETTINGS_PAGE_2   10
+#define YPOS_PRESS_COLORSETTINGS_PAGE_2   10
+#define XPOS_PRESS_UPPER_SETTINGS_PAGE_2  10
+#define YPOS_PRESS_UPPER_SETTINGS_PAGE_2  11
+#define XPOS_PRESS_LOWER_SETTINGS_PAGE_2  10
+#define YPOS_PRESS_LOWER_SETTINGS_PAGE_2  12
+
+//
+// ********************************
+//
+
+char *pSettingsPage3[] = {
+    "----- Setup 3 ------",
+    "[ ] HTTP",
+    "[ ] TELNET",
+    "[ ] NTP",
+    "[ ] RTC",
+    "[ ] MOND",
+    "[ ] LiPo",
+    "[ ] runtime",
+    "Background = ",
+    "Foreground = ",
+    "
+    "
+    "
+    "--------------------",
+    "   [OK] [CANCEL]",
+    NULL
+};
+
+#define XPOS_HTTP_SETTINGS_PAGE_3          1
+#define YPOS_HTTP_SETTINGS_PAGE_3          1
+
+//
+// ********************************
+//
+
+#define XPOS_OK_SETTINGS_PAGE              4
+#define YPOS_OK_SETTINGS_PAGE             14
+
+#define XPOS_CANCEL_SETTINGS_PAGE          9
+#define YPOS_CANCEL_SETTINGS_PAGE         14
+
+//
+// ********************************
+//
+
+//
+// ********************************
+//
+
+// |   -- Stunden:Minuten.Sekunden
+// |     -- Update Intervall Sekunde
+// |   -- Stunden:Minuten
+// |     -- Update Intervall Minute
+// | 
+// | Luftfeuchtigkeit
+// |   -- 2 Nachkommastellen
+// |   -- 1 Nachkommastelle
+// |   -- 0 Nachkommastellen
+// |   -- Update Intervall
+// |   -- Trend-Anzeige
+// |   -- Schrift-Farbe
+// |      -- Mono
+// |      -- farbige Anzeige
+// |         -- unterer Grenzwert
+// |         -- oberer Grenzwert
+// | Temperatur
+// |   -- 2 Nachkommastellen
+// |   -- 1 Nachkommastelle
+// |   -- 0 Nachkommastellen
+// |   -- Update Intervall
+// |   -- Trend-Anzeige
+// |   -- Schrift-Farbe
+// |      -- Mono
+// |      -- farbige Anzeige
+// |         -- unterer Grenzwert
+// |         -- oberer Grenzwert
+// | Luftdruck
+// |   -- 2 Nachkommastellen
+// |   -- 1 Nachkommastelle
+// |   -- 0 Nachkommastellen
+// |   -- Update Intervall
+// |   -- Trend-Anzeige
+// |   -- Schrift-Farbe
+// |      -- Mono
+// |      -- farbige Anzeige
+// |         -- unterer Grenzwert
+// |         -- oberer Grenzwert
+// | IP-Adresse
+// | 
+// | Seite 2:
+// | ========
+// | Hintergrund-Farbe
+// | Schrift-Farbe
+// |   -- Wochentag
+// |   -- Datum
+// |   -- Uhrzeit
+// |      -- Stunden:Minuten.Sekunden
+// |        -- Update Intervall Sekunde
+// |      -- Stunden:Minuten
+// |        -- Update Intervall Minute
+// | Mondphase
+// | Alternative Sensoren
+// | Akku Kapazitaet
+// | Restlaufzeit
+// | 
+// | 
+// | Seite 3:
+// | ========
+// | SSID
+// | PASSPHRASE
+// | Feste IP
+// | Admin Passwort
+// | 
+// | 
+
+
+
+#endif // NEVERDEF
+//

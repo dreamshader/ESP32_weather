@@ -1,0 +1,440 @@
+//
+// Einstellungen:
+// Format der Ausgabe (ein, zwei, keine Nachkomma-Stellen)
+// abhaengig davon Vergleich (auf bzw. abrunden, ohne Nachkomma vergleichen)
+//
+// Farbe der Ausgabe (alle weiss oder rot, gelb, grün und Grenzwerte dazu)
+// Beschriftung der Felder
+//
+// Trend-Anzeige
+// Mondphasen
+// IP Adresse
+//
+// Lese- unf Anzeige-Intervalle
+//
+// Format und Farbe des Datums und der Uhrzeit
+//
+
+// | Seite 1:
+// | ========
+// | Hintergrund-Farbe
+// | Schrift-Farbe
+// | Wochentag
+// | Datum
+// | Uhrzeit
+// |   -- Stunden:Minuten.Sekunden
+// |     -- Update Intervall Sekunde
+// |   -- Stunden:Minuten
+// |     -- Update Intervall Minute
+// | 
+// | Luftfeuchtigkeit
+// |   -- 2 Nachkommastellen
+// |   -- 1 Nachkommastelle
+// |   -- 0 Nachkommastellen
+// |   -- Update Intervall
+// |   -- Trend-Anzeige
+// |   -- Schrift-Farbe
+// |      -- Mono
+// |      -- farbige Anzeige
+// |         -- unterer Grenzwert
+// |         -- oberer Grenzwert
+// | Temperatur
+// |   -- 2 Nachkommastellen
+// |   -- 1 Nachkommastelle
+// |   -- 0 Nachkommastellen
+// |   -- Update Intervall
+// |   -- Trend-Anzeige
+// |   -- Schrift-Farbe
+// |      -- Mono
+// |      -- farbige Anzeige
+// |         -- unterer Grenzwert
+// |         -- oberer Grenzwert
+// | Luftdruck
+// |   -- 2 Nachkommastellen
+// |   -- 1 Nachkommastelle
+// |   -- 0 Nachkommastellen
+// |   -- Update Intervall
+// |   -- Trend-Anzeige
+// |   -- Schrift-Farbe
+// |      -- Mono
+// |      -- farbige Anzeige
+// |         -- unterer Grenzwert
+// |         -- oberer Grenzwert
+// | IP-Adresse
+// | 
+// | Seite 2:
+// | ========
+// | Hintergrund-Farbe
+// | Schrift-Farbe
+// |   -- Wochentag
+// |   -- Datum
+// |   -- Uhrzeit
+// |      -- Stunden:Minuten.Sekunden
+// |        -- Update Intervall Sekunde
+// |      -- Stunden:Minuten
+// |        -- Update Intervall Minute
+// | Mondphase
+// | Alternative Sensoren
+// | Akku Kapazitaet
+// | Restlaufzeit
+// | 
+// | 
+// | Seite 3:
+// | ========
+// | SSID
+// | PASSPHRASE
+// | Feste IP
+// | Admin Passwort
+// | 
+// | 
+// ************************************************************
+// size 2: 12345678901234567890
+//       1 a b c d e f g h i j 
+//       2 k l m n o p q r s t
+//       3 u v w x y z
+//       4 A B C D E F G H I J
+//       5 K L M N O P Q R S T
+//       6 U V W X Y Z
+//       7
+//       8
+//       9
+//       0
+//       1
+//       2
+//       3     [NEXT]
+//       4 [<] [DEL] [>]
+//       5 [OK] [CANCEL]
+//
+// size 2: 12345678901234567890
+//       1 0 1 2 3 4 5 6 7 8 9
+//       2 ! " § $ % & / ( ) =
+//       3 ? ? ; : _ , . - # ' 
+//       4 + * ^ ° ~ @ \ } ] [ 
+//       5 { < > |
+//       6
+//       7
+//       8
+//       9
+//       0
+//       1
+//       2
+//       3     [PREV]
+//       4 [<] [DEL] [>]
+//       5 [OK] [CANCEL]
+// ************************************************************
+// size 2: 12345678901234567890
+//       1
+//       2
+//       3
+//       4
+//       5 --------------------
+//       6 a b c d e f g h i j 
+//       7 k l m n o p q r s t
+//       8 u v w x y z
+//       9 A B C D E F G H I J
+//       0 K L M N O P Q R S T
+//       1 U V W X Y Z
+//       2 --------------------
+//       3     [NEXT]
+//       4 [<] [DEL] [>]
+//       5 [OK] [CANCEL]
+//
+// size 2: 12345678901234567890
+//       1
+//       2
+//       3
+//       4
+//       5
+//       6 --------------------
+//       7 0 1 2 3 4 5 6 7 8 9
+//       8 ! " § $ % & / ( ) =
+//       9 ? ? ; : _ , . - # ' 
+//       0 + * ^ ° ~ @ \ } ] [ 
+//       1 { < > |
+//       2 --------------------
+//       3     [PREV]
+//       4 [<] [DEL] [>]
+//       5 [OK] [CANCEL]
+//
+// **********************************************************
+//
+
+// char *page_1 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+// char *page_2 = "0123456789!\"§$%&/()=??;:_,.-#\'+*^°~@\\}][{<>|"
+// char *action_1_1 = "[NEXT]"
+// char *action_1_2 = "[PREV]"
+// char *action_2 = "[<] [DEL] [>]"
+// char *action_3 = "[OK] [CANCEL]"
+//
+// char *page_1_line_1 = "";
+// char *page_1_line_2 = "";
+// char *page_1_line_3 = "";
+// char *page_1_line_4 = "";
+// char *page_1_line_5 = "--------------------";
+// char *page_1_line_6 = "a b c d e f g h i j";
+// char *page_1_line_7 = "k l m n o p q r s t";
+// char *page_1_line_8 = "u v w x y z";
+// char *page_1_line_9 = "A B C D E F G H I J";
+// char *page_1_line_10 = "K L M N O P Q R S T";
+// char *page_1_line_11 = "U V W X Y Z";
+// char *page_1_line_12 = "--------------------";
+// char *page_1_line_13 = "[NEXT]";
+// char *page_1_line_14 = "[<] [DEL] [>]";
+// char *page_1_line_15 = "[OK] [CANCEL]";
+//
+// char *page_2_line_1 = "";
+// char *page_2_line_2 = "";
+// char *page_2_line_3 = "";
+// char *page_2_line_4 = "";
+// char *page_2_line_5 = "";
+// char *page_2_line_6 = "--------------------";
+// char *page_2_line_7 = "0 1 2 3 4 5 6 7 8 9";
+// char *page_2_line_8 = "! \" § $ % & / ( ) =";
+// char *page_2_line_9 = "? ? ; : _ , . - # \' ";
+// char *page_2_line_10 = "+ * ^ ° ~ @ \\ } ] [ ";
+// char *page_2_line_11 = "{ < > |";
+// char *page_2_line_12 = "--------------------";
+// char *page_2_line_13 = "[PREV]";
+// char *page_2_line_14 = "[<] [DEL] [>]";
+// char *page_2_line_15 = "[OK] [CANCEL]";
+//
+// ************************************************************
+//
+// size 3: 1234567890123
+//       1 a b c d e f g
+//       2 h i j k l m n
+//       3 o p q r s t u
+//       4
+//       5
+//       6
+//       7
+//       8 [ 2 3 4 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1 v w x y z
+//       2 A B C D E F G
+//       3 H I J K L M N
+//       4
+//       5
+//       6
+//       7
+//       8 [ 1 3 4 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1 O P Q R S T U
+//       2 V W X Y Z
+//       3
+//       4
+//       5
+//       6
+//       7
+//       8 [ 1 2 4 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1 0 1 2 3 4 5 6
+//       2 7 8 9
+//       3
+//       4
+//       5
+//       6
+//       7
+//       8 [ 1 2 3 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1 ! " § $ % & /
+//       2 ( ) = ? ? ; :
+//       3 _ , . - # ' +
+//       4
+//       5
+//       6
+//       7
+//       8 [ 1 2 3 4 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1 * ^ ° ~ @ \ }
+//       2 ] [ { < > |
+//       3
+//       4
+//       5
+//       6
+//       7
+//       8 [ 1 2 3 4 5 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// **********************************************************
+// size 3: 1234567890123
+//       1
+//       2
+//       3
+//       4
+//       5 a b c d e f g
+//       6 h i j k l m n
+//       7 o p q r s t u
+//       8 [ 2 3 4 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1
+//       2
+//       3
+//       4
+//       5 v w x y z
+//       6 A B C D E F G
+//       7 H I J K L M N
+//       8 [ 1 3 4 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1
+//       2
+//       3
+//       4
+//       5
+//       6 O P Q R S T U
+//       7 V W X Y Z
+//       8 [ 1 2 4 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1
+//       2
+//       3
+//       4
+//       5
+//       6 0 1 2 3 4 5 6
+//       7 7 8 9
+//       8 [ 1 2 3 5 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1
+//       2
+//       3
+//       4
+//       5 ! " § $ % & /
+//       6 ( ) = ? ? ; :
+//       7 _ , . - # ' +
+//       8 [ 1 2 3 4 6 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// size 3: 1234567890123
+//       1
+//       2
+//       3
+//       4
+//       5
+//       6 * ^ ° ~ @ \ }
+//       7 ] [ { < > |
+//       8 [ 1 2 3 4 5 ]
+//       9 [<] [DEL] [>]
+//       0 [OK] [CANCEL]
+//
+// **********************************************************
+//
+// char *page_1 = "abcdefghijklmnopqrstu"
+// char *page_2 = "vwxyzABCDEFGHIJKLMN"
+// char *page_3 = "OPQRSTUVWXYZ"
+// char *page_4 = "0123456789"
+// char *page_5 = "!\"§$%&/()=??;:_,.-#\'+"
+// char *page_6 = "*^°~@\}][{<>|"
+// char *action_1_1 = "[ 2 3 4 5 6 ]"
+// char *action_1_2 = "[ 1 3 4 5 6 ]"
+// char *action_1_3 = "[ 1 2 4 5 6 ]"
+// char *action_1_4 = "[ 1 2 3 5 6 ]"
+// char *action_1_5 = "[ 1 2 3 4 6 ]"
+// char *action_1_6 = "[ 1 2 3 4 5 ]"
+// char *action_2 = "[<] [DEL] [>]"
+// char *action_3 = "[OK] [CANCEL]"
+//
+// **********************************************************
+//
+// char *page_1_line_1 "";
+// char *page_1_line_2 "";
+// char *page_1_line_3 "";
+// char *page_1_line_4 "";
+// char *page_1_line_5 "a b c d e f g";
+// char *page_1_line_6 "h i j k l m n";
+// char *page_1_line_7 "o p q r s t u";
+// char *page_1_line_8 "[ 2 3 4 5 6 ]";
+// char *page_1_line_9 "[<] [DEL] [>]";
+// char *page_1_line_0 "[OK] [CANCEL]";
+//
+// char *page_2_line_1 "";
+// char *page_2_line_2 "";
+// char *page_2_line_3 "";
+// char *page_2_line_4 "";
+// char *page_2_line_5 "v w x y z";
+// char *page_2_line_6 "A B C D E F G";
+// char *page_2_line_7 "H I J K L M N";
+// char *page_2_line_8 "[ 1 3 4 5 6 ]";
+// char *page_2_line_9 "[<] [DEL] [>]";
+// char *page_2_line_0 "[OK] [CANCEL]";
+//
+// char *page_3_line_1 "";
+// char *page_3_line_2 "";
+// char *page_3_line_3 "";
+// char *page_3_line_4 "";
+// char *page_3_line_5 "";
+// char *page_3_line_6 "O P Q R S T U";
+// char *page_3_line_7 "V W X Y Z";
+// char *page_3_line_8 "[ 1 2 4 5 6 ]";
+// char *page_3_line_9 "[<] [DEL] [>]";
+// char *page_3_line_0 "[OK] [CANCEL]";
+//
+// char *page_4_line_1 "";
+// char *page_4_line_2 "";
+// char *page_4_line_3 "";
+// char *page_4_line_4 "";
+// char *page_4_line_5 "";
+// char *page_4_line_6 "0 1 2 3 4 5 6";
+// char *page_4_line_7 "7 8 9";
+// char *page_4_line_8 "[ 1 2 3 5 6 ]";
+// char *page_4_line_9 "[<] [DEL] [>]";
+// char *page_4_line_0 "[OK] [CANCEL]";
+//
+// char *page_5_line_1 "";
+// char *page_5_line_2 "";
+// char *page_5_line_3 "";
+// char *page_5_line_4 "";
+// char *page_5_line_5 "! \" § $ % & /";
+// char *page_5_line_6 "( ) = ? ? ; :";
+// char *page_5_line_7 "_ , . - # \' +";
+// char *page_5_line_8 "[ 1 2 3 4 6 ]";
+// char *page_5_line_9 "[<] [DEL] [>]";
+// char *page_5_line_0 "[OK] [CANCEL]";
+//
+// char *page_6_line_1 "";
+// char *page_6_line_2 "";
+// char *page_6_line_3 "";
+// char *page_6_line_4 "";
+// char *page_6_line_5 "";
+// char *page_6_line_6 "* ^ ° ~ @ \\ }";
+// char *page_6_line_7 "] [ { < > |";
+// char *page_6_line_8 "[ 1 2 3 4 5 ]";
+// char *page_6_line_9 "[<] [DEL] [>]";
+// char *page_6_line_0 "[OK] [CANCEL]";
+//
+
+// **********************************************************
+//
+// size 1: 40 Zeichen/Zeile 30 Zeilen
+// size 2: 20 Zeichen/Zeile 15 Zeilen
+// size 3: 13 Zeichen/Zeile 10 Zeilen (234 Pix X)
+// size 4: 10 Zeichen/Zeile  7, Zeilen (224 Pix Y)
+
